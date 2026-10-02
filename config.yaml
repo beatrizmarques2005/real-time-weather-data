@@ -1,25 +1,25 @@
-# Fill in from the assignment card (Guidelines, Chapter 19).
+# Assignment card PA48 (Guidelines, Chapter 19).
 assignment:
-  code: PAxx
-  group: GroupYY
-  business_context: "TBD"
-  business_question: "TBD"
-  target: T1            # one of T1, T2, T3, T4, T5, T6
+  code: PA48
+  group: GroupYY        # fill in Moodle group number
+  business_context: "Outdoor Running Event Organiser"
+  business_question: "Which city offers more reliable weather windows for recurring outdoor races?"
+  target: T6            # Adverse Outdoor Event: rain (P >= 0.1 mm) OR strong wind (W >= pooled warm-up Q0.80)
 
 cities:
-  city_a:
-    name: "CITY_A"
-    latitude: null      # e.g. Lisboa 38.7223
-    longitude: null     # e.g. Lisboa -9.1393
-  city_b:
-    name: "CITY_B"
-    latitude: null
-    longitude: null
+  city_a:               # Student A - Beatriz Marques
+    name: "Angra do Heroismo"
+    latitude: 38.6539
+    longitude: -27.21839
+  city_b:               # Student B - Duarte Fernandes
+    name: "Braga"
+    latitude: 41.5514
+    longitude: -8.42311
 
 period:
   start_date: "2024-01-01"
   end_date: "2024-12-31"
-  timezone: "UTC"       # UTC avoids daylight-saving duplicates/gaps
+  timezone: "UTC"       # UTC aligns both streams (Azores is UTC-1 vs mainland) and avoids DST duplicates/gaps
 
 warmup:
   n_hours: 720          # first 30 days: threshold estimation + initial learning, not scored
@@ -28,6 +28,14 @@ features:
   windows: [6, 24]
 
 seed: 42
+
+students:
+  - name: "Beatriz Marques"
+    number: "20231605"
+    primary_city: "Angra do Heroismo"
+  - name: "Duarte Fernandes"
+    number: "20231619"
+    primary_city: "Braga"
 
 paths:
   raw_data: data/raw
