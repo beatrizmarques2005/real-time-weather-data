@@ -57,6 +57,14 @@ Every feature uses only observations up to `t-1`.
 | 4 | Online Bagging (Hoeffding Trees) | Online-resampling ensemble |
 | 5 | Adaptive Random Forest | Adaptive ensemble of stream trees |
 
+**Reference baselines (optional, Guidelines 10.1 — they do not replace the five mandatory models):**
+
+| Baseline | Learning regime | Role |
+|---|---|---|
+| Majority (`dummy.PriorClassifier`) | Online: updates class counts | "Better than what?" floor |
+| Persistence (`dummy.NoChangeClassifier`) | Online: predicts the last revealed label y(t-1) | Naive temporal floor for a persistent weather event |
+| FrozenLogReg | Offline: learns on warm-up only, then predict-only | Same model family as OnlineLogReg, different learning regime |
+
 ### Protocol
 - Chronological replay only, with no random train/test split
 - **PREDICT → EVALUATE → LEARN** for every event
@@ -65,7 +73,7 @@ Every feature uses only observations up to `t-1`.
 - Fresh model instances for every run, with a fixed random seed
 
 ### Metrics
-Accuracy, Macro-F1, Precision and Recall (adverse-event class), confusion matrix, and **prediction time / update time per event**.
+Accuracy, Macro-F1, Precision and Recall (adverse-event class), confusion matrix, and **prediction time / update time per event** and throughput. Every metric is tracked **cumulatively** and over a **sliding window of the last 168 evaluated predictions (1 week)**, using an incremental confusion matrix. At the end of each run the cumulative metrics are checked against a batch scikit-learn computation. See `docs/course_alignment.md` for the mapping to Week 4 and the Guidelines.
 
 ## 📁 Repository Structure
 
@@ -74,12 +82,14 @@ real-time-weather-data/
 ├── README.md
 ├── config.yaml              # PA48 card, cities, period, warm-up, seed
 ├── requirements.txt
+├── docs/course_alignment.md  # Week 4 + Guidelines → code mapping
 ├── data/
 │   └── raw/                 # Open-Meteo snapshots (cached CSVs)
 ├── notebooks/               # city-level EDA and figures
 ├── results/
 │   ├── metrics.csv
 │   ├── configurations.csv
+│   ├── history.csv.gz       # cumulative + window metrics per evaluated event
 │   └── figures/
 └── src/
     ├── practical_assignment.py   # main experiment
@@ -88,6 +98,7 @@ real-time-weather-data/
     ├── features.py               # Representations A and B (leakage-free)
     ├── models.py                 # five mandatory learners
     └── prequential.py            # predict → evaluate → learn loop
+    ├── plots.py                  # performance, confusion-matrix and cost figures
 ```
 
 ## ⚙️ Setup & Reproduction
@@ -100,7 +111,7 @@ pip install -r requirements.txt
 python src/practical_assignment.py --config config.yaml
 ```
 
-The script downloads (or reuses cached) data for both cities and prints the data-quality reports and the frozen wind threshold. It then writes `results/metrics.csv` and `results/configurations.csv`.
+The script downloads (or reuses cached) data for both cities and prints the data-quality reports and the frozen wind threshold. It then writes `results/metrics.csv`, `results/configurations.csv`, `results/history.csv.gz` and the figures in `results/figures/`.
 
 ## 🔁 Reproducibility
 
