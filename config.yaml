@@ -27,6 +27,13 @@ warmup:
 features:
   windows: [6, 24]
 
+evaluation:
+  window_size: 168      # recent-performance window: last 168 evaluated predictions = 1 week of hourly events
+  track_memory: false   # tracemalloc peak memory (slows the run; turn on for the computational section)
+
+baselines:
+  include: true         # reference learners - NOT part of the five mandatory models
+
 seed: 42
 
 students:
