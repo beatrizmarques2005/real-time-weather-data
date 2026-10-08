@@ -1,0 +1,550 @@
+\documentclass[11pt,a4paper]{article}
+
+% =============================================================================
+% PRACTICAL ASSIGNMENT I - TECHNICAL REPORT TEMPLATE
+% Data Stream Mining - NOVA IMS
+% Overleaf-ready / pdfLaTeX
+%
+% STUDENTS: Start by editing ONLY the metadata block below.
+% Keep the report structure, margins, font size, and section order unchanged.
+% =============================================================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[a4paper,top=2.15cm,bottom=2.30cm,left=2.35cm,right=2.35cm,headheight=22pt]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{pifont}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[backend=biber,style=authoryear,maxcitenames=2]{biblatex}
+\addbibresource{references.bib}
+\usepackage{ifthen}
+
+% -----------------------------------------------------------------------------%
+% 1. STUDENT METADATA - EDIT THIS BLOCK
+% -----------------------------------------------------------------------------%
+\newcommand{\AssignmentCode}{PAxx}
+\newcommand{\StudentA}{Student A Name}
+\newcommand{\StudentAID}{Student A Number}
+\newcommand{\StudentB}{Student B Name}
+\newcommand{\StudentBID}{Student B Number}
+\newcommand{\CityA}{City A}
+\newcommand{\CityB}{City B}
+\newcommand{\BusinessScenario}{Assigned Business Scenario}
+\newcommand{\EventTarget}{T1--T6: Assigned Event Target}
+\newcommand{\TargetDefinition}{Replace with the exact target definition used}
+\newcommand{\HistoricalPeriod}{YYYY-MM-DD to YYYY-MM-DD}
+\newcommand{\WarmupRule}{Replace with the warm-up fraction or rule}
+\newcommand{\RandomSeed}{42}
+\newcommand{\SubmissionDate}{25 October 2026}
+
+% TEMPLATE MODE:
+% Keep \draftinstructionstrue while writing to display guidance boxes.
+% BEFORE FINAL SUBMISSION change it to: \draftinstructionsfalse
+\newif\ifdraftinstructions
+\draftinstructionstrue
+
+% -----------------------------------------------------------------------------%
+% 2. VISUAL IDENTITY
+% -----------------------------------------------------------------------------%
+\definecolor{Navy}{HTML}{0B2F4F}
+\definecolor{Teal}{HTML}{21A58B}
+\definecolor{Mint}{HTML}{9CE3D5}
+\definecolor{PaleMint}{HTML}{EEF8F5}
+\definecolor{PaleBlue}{HTML}{F2F7FB}
+\definecolor{BodyText}{HTML}{16324A}
+\definecolor{SecondaryText}{HTML}{526575}
+\definecolor{RuleGrey}{HTML}{DFE7EB}
+\definecolor{PromptBG}{HTML}{F6F9FB}
+\definecolor{WarningBG}{HTML}{FFF8EA}
+\definecolor{WarningLine}{HTML}{D28A12}
+\definecolor{SoftGrey}{HTML}{F1F3F5}
+
+\color{BodyText}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlist[itemize]{leftmargin=1.6em,itemsep=0.20em,topsep=0.2em}
+\setlist[enumerate]{leftmargin=1.8em,itemsep=0.20em,topsep=0.2em}
+\renewcommand{\arraystretch}{1.18}
+\setstretch{1.03}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=Navy,
+  urlcolor=Teal,
+  citecolor=Navy,
+  pdftitle={Practical Assignment I - Technical Report - \AssignmentCode},
+  pdfauthor={\StudentA\ and \StudentB}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{SecondaryText}\textbf{DATA STREAM MINING} \;|\; Practical Assignment I}
+\fancyhead[R]{\small\color{SecondaryText}\AssignmentCode\; | \;\CityA\ vs. \CityB}
+\fancyfoot[L]{\small\color{SecondaryText}NOVA IMS}
+\fancyfoot[R]{\small\color{SecondaryText}Page \thepage\ of \pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{RuleGrey}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0pt}
+
+\titleformat{\section}
+  {\Large\bfseries\color{Navy}}
+  {\thesection}{0.65em}{}
+  [\vspace{0.15em}\color{Mint}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries\color{Teal}}
+  {\thesubsection}{0.55em}{}
+\titlespacing*{\section}{0pt}{1.15em}{0.55em}
+\titlespacing*{\subsection}{0pt}{0.95em}{0.35em}
+
+\newtcolorbox{keybox}[1][]{
+  enhanced,breakable,colback=PaleMint,colframe=Teal,
+  boxrule=0.8pt,leftrule=4pt,arc=2mm,
+  left=4mm,right=4mm,top=3mm,bottom=3mm,
+  before skip=0.7em,after skip=0.7em,
+  fonttitle=\bfseries\color{Navy},#1
+}
+\newtcolorbox{businessbox}[1][]{
+  enhanced,breakable,colback=PaleBlue,colframe=Navy,
+  boxrule=0.8pt,leftrule=4pt,arc=2mm,
+  left=4mm,right=4mm,top=3mm,bottom=3mm,
+  before skip=0.7em,after skip=0.7em,
+  fonttitle=\bfseries\color{Navy},#1
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced,breakable,colback=WarningBG,colframe=WarningLine,
+  boxrule=0.8pt,leftrule=4pt,arc=2mm,
+  left=4mm,right=4mm,top=3mm,bottom=3mm,
+  before skip=0.7em,after skip=0.7em,
+  fonttitle=\bfseries\color{Navy},#1
+}
+\newtcolorbox{instructionbox}[1][]{
+  enhanced,breakable,colback=PromptBG,colframe=RuleGrey,
+  boxrule=0.6pt,arc=1.5mm,
+  left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,
+  before skip=0.55em,after skip=0.65em,
+  fonttitle=\bfseries\color{SecondaryText},#1
+}
+
+\newcommand{\instruction}[1]{%
+  \ifdraftinstructions
+    \begin{instructionbox}[title=What to write here]
+      \small\color{SecondaryText}#1
+    \end{instructionbox}
+  \fi
+}
+
+\newcommand{\draftbanner}{%
+  \ifdraftinstructions
+    \begin{warningbox}[title=Template mode is ON]
+      \small This PDF still displays writing guidance. Before final submission, change
+      \texttt{\string\draftinstructionstrue} to
+      \texttt{\string\draftinstructionsfalse} near the top of \texttt{main.tex} and compile again.
+    \end{warningbox}
+  \fi
+}
+
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+
+% Figure helper: the template compiles even before students upload the image.
+\newcommand{\reportfigure}[4][0.88\textwidth]{%
+\begin{figure}[H]
+\centering
+\IfFileExists{#2}{%
+  \includegraphics[width=#1]{#2}%
+}{%
+  \fbox{\parbox[c][4.0cm][c]{0.82\textwidth}{\centering
+  \color{SecondaryText}\textbf{Figure placeholder}\\[0.4em]
+  Upload \texttt{\detokenize{#2}} to the Overleaf project,\\
+  or replace this figure call with your own file.}}
+}
+\caption{#3}
+\label{#4}
+\end{figure}
+}
+
+% -----------------------------------------------------------------------------%
+% DOCUMENT
+% -----------------------------------------------------------------------------%
+\begin{document}
+\pagenumbering{gobble}
+
+% COVER PAGE
+\begin{titlepage}
+\pagecolor{Navy}
+\color{white}
+\vspace*{1.25cm}
+{\small\bfseries\color{Mint}\MakeUppercase{Data Stream Mining \;\textbullet\; NOVA IMS}}\\[0.85cm]
+{\Huge\bfseries Practical Assignment I}\\[0.30cm]
+{\fontsize{25}{29}\selectfont\bfseries Technical Report}\\[0.55cm]
+{\Large\color{Mint}Business-Oriented Data Stream Mining}\\[1.05cm]
+
+\begin{tcolorbox}[colback=white!7!Navy,colframe=Mint,boxrule=0.8pt,arc=2mm,left=5mm,right=5mm,top=4mm,bottom=4mm]
+\color{white}
+\begin{tabularx}{\textwidth}{@{}L{4.3cm}Y@{}}
+\textbf{Assignment code} & \AssignmentCode \\
+\textbf{Business scenario} & \BusinessScenario \\
+\textbf{Cities} & \CityA\ vs. \CityB \\
+\textbf{Event target} & \EventTarget \\
+\textbf{Historical period} & \HistoricalPeriod \\
+\end{tabularx}
+\end{tcolorbox}
+
+\vspace{0.75cm}
+\begin{tabularx}{\textwidth}{@{}YY@{}}
+\textbf{Student A} & \textbf{Student B} \\
+\StudentA & \StudentB \\
+\StudentAID & \StudentBID \\
+Primary city: \CityA & Primary city: \CityB \\
+\end{tabularx}
+
+\vfill
+{\large\bfseries Submission date: \SubmissionDate}\\[0.15cm]
+{\normalsize\color{white!75}Expected main-body length: 6--8 pages, excluding cover, references, and optional appendix.}
+
+\ifdraftinstructions
+\vspace{0.55cm}
+{\small\bfseries\color{Mint}TEMPLATE MODE - WRITING GUIDANCE IS CURRENTLY VISIBLE}
+\fi
+\vspace*{0.55cm}
+\end{titlepage}
+\nopagecolor
+\color{BodyText}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\draftbanner
+
+\begin{keybox}[title=Formatting rule]
+Do not modify the report structure, section order, margins, body font size, or page geometry. You may add subsections where useful, but keep the mandatory sections below. Delete unused optional figure placeholders rather than filling space unnecessarily.
+\end{keybox}
+
+% =============================================================================
+\section{Business Context and Objective}
+% =============================================================================
+\instruction{Briefly describe the assigned business problem and the operational decision to be supported. Identify the two cities and the event target. Explain why this event matters to the business. End the section with one concise objective or guiding question. Do not make the recommendation yet. Suggested length: about half a page.}
+
+% WRITE YOUR TEXT BELOW THIS LINE.
+
+
+% =============================================================================
+\section{Data and Stream Construction}
+% =============================================================================
+\instruction{Describe the Open-Meteo data source, historical period, weather variables, sampling frequency, chronological ordering, warm-up, preprocessing, target construction, and any cleaning decisions. Explain how potential outliers were inspected. Remember: valid extreme weather observations are not automatically errors. State explicitly that future information was not used to construct current inputs. Suggested length: half to one page.}
+
+\subsection{Stream configuration}
+\begin{table}[H]
+\centering
+\caption{Core stream and experimental configuration. Replace all placeholder values.}
+\label{tab:stream-config}
+\begin{tabularx}{0.94\textwidth}{@{}L{5.2cm}Y@{}}
+\toprule
+\textbf{Item} & \textbf{Configuration used} \\
+\midrule
+Assignment code & \AssignmentCode \\
+City A / City B & \CityA\ / \CityB \\
+Historical period & \HistoricalPeriod \\
+Sampling frequency & Replace with value \\
+Variables retrieved & Replace with variable list \\
+Warm-up rule & \WarmupRule \\
+Event target & \EventTarget \\
+Target definition / threshold & \TargetDefinition \\
+Threshold estimation & Absolute rule or pooled warm-up statistic \\
+Random seed & \RandomSeed \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Target and temporal alignment}
+\instruction{Define the binary target mathematically or in precise pseudocode. Explain which observations are used as predictors at time $t$ and why the target-defining value at time $t$ is excluded from the inputs. If a threshold is data-driven, explain that it was estimated from the pooled warm-up only and then frozen.}
+
+% Example notation - adapt to your assigned target if useful.
+\begin{equation}
+X_t = \{\text{information available before time }t\},
+\qquad
+Y_t = \{0,1\}\text{ observed at time }t.
+\end{equation}
+
+
+% =============================================================================
+\section{City A Analysis: \CityA}
+% =============================================================================
+\instruction{This section is primarily the responsibility of Student A. Characterise the stream for City A before interpreting the models. Include data quality observations, descriptive statistics, target class distribution, temporal behaviour, rolling/window evidence, and at least one analysis that is relevant to the assigned business context. Explain what the evidence means; do not simply describe the shape of a chart. Suggested length: about one page.}
+
+\begin{table}[H]
+\centering
+\caption{Selected descriptive and event statistics for \CityA. Replace or extend the rows when justified.}
+\label{tab:city-a-profile}
+\begin{tabularx}{0.88\textwidth}{@{}L{6.0cm}C{3.2cm}Y@{}}
+\toprule
+\textbf{Indicator} & \textbf{Value} & \textbf{Why it matters} \\
+\midrule
+Number of observations & -- & -- \\
+Positive-event rate & -- & -- \\
+Selected weather statistic & -- & -- \\
+Selected rolling/window statistic & -- & -- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\reportfigure{figures/cityA_stream_profile.png}{City A stream profile. Replace the caption with a precise statement of what the figure shows.}{fig:city-a-profile}
+
+
+% =============================================================================
+\section{City B Analysis: \CityB}
+% =============================================================================
+\instruction{This section is primarily the responsibility of Student B. Use the same analytical logic applied to City A so that the subsequent comparison is fair. Characterise data quality, descriptive behaviour, target distribution, temporal behaviour, and rolling/window evidence. Explain the operational meaning of the evidence. Suggested length: about one page.}
+
+\begin{table}[H]
+\centering
+\caption{Selected descriptive and event statistics for \CityB. Replace or extend the rows when justified.}
+\label{tab:city-b-profile}
+\begin{tabularx}{0.88\textwidth}{@{}L{6.0cm}C{3.2cm}Y@{}}
+\toprule
+\textbf{Indicator} & \textbf{Value} & \textbf{Why it matters} \\
+\midrule
+Number of observations & -- & -- \\
+Positive-event rate & -- & -- \\
+Selected weather statistic & -- & -- \\
+Selected rolling/window statistic & -- & -- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\reportfigure{figures/cityB_stream_profile.png}{City B stream profile. Replace the caption with a precise statement of what the figure shows.}{fig:city-b-profile}
+
+
+% =============================================================================
+\section{Comparative Data Analysis}
+% =============================================================================
+\instruction{Compare the two cities before discussing classifier scores. Focus on differences that matter to the assigned business question: event frequency, variability, persistence, temporal patterns, operational thresholds, or other justified indicators. The comparison must use compatible definitions for both cities. This section is joint work. Suggested length: about one page.}
+
+\begin{table}[H]
+\centering
+\caption{Business-relevant comparison before modelling. Choose indicators that are meaningful for your assignment.}
+\label{tab:business-comparison}
+\begin{tabularx}{0.92\textwidth}{@{}Y C{3.0cm} C{3.0cm}@{}}
+\toprule
+\textbf{Indicator} & \textbf{\CityA} & \textbf{\CityB} \\
+\midrule
+Positive-event rate & -- & -- \\
+Selected variability / persistence measure & -- & -- \\
+Selected business-relevant statistic & -- & -- \\
+Additional group-designed indicator & -- & -- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\reportfigure{figures/city_comparison.png}{Comparative evidence for \CityA\ and \CityB. Replace the caption with the specific analytical message.}{fig:city-comparison}
+
+
+% =============================================================================
+\section{Data Stream Mining Experiment}
+% =============================================================================
+\instruction{Describe the two required feature representations, the five mandatory learners, any optional model used, model parameters, the prequential protocol, and the evaluation metrics. Explain how the same chronological history was preserved within each city. If you investigate one model parameter, state the values compared and the criterion used to interpret the trade-off. Suggested length: one to one-and-a-half pages.}
+
+\subsection{Feature representations}
+\begin{businessbox}[title=Representation A - Previous-state features]
+At minimum, use lagged weather information such as temperature$(t-1)$, humidity$(t-1)$, precipitation$(t-1)$ and wind$(t-1)$. Adapt the exact set to the available variables while preserving the no-future-information rule.
+\end{businessbox}
+
+\begin{businessbox}[title=Representation B - Temporal stream context]
+Extend Representation A with justified recent context, for example rolling means, rolling standard deviations, recent deltas, or recent event frequency. All windowed features must use observations strictly before the prediction time.
+\end{businessbox}
+
+\subsection{Model configuration}
+\begin{table}[H]
+\centering
+\caption{Models and main configurations used in the experiment.}
+\label{tab:model-config}
+\begin{tabularx}{0.96\textwidth}{@{}L{4.7cm}Y@{}}
+\toprule
+\textbf{Model} & \textbf{Main configuration / parameters} \\
+\midrule
+Gaussian Naive Bayes & Replace with relevant settings or ``default'' \\
+Online Logistic Regression & Replace with optimizer / learning-rate settings \\
+Hoeffding Tree & Replace with grace period, delta, tau, leaf prediction, etc. \\
+Online Bagging & Replace with base learner, number of models, seed, etc. \\
+Adaptive Random Forest & Replace with number of models and other relevant settings \\
+Optional model (if used) & Replace or delete this row \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Evaluation protocol}
+\begin{keybox}[title=Mandatory streaming order]
+\centering\Large\textbf{PREDICT $\rightarrow$ EVALUATE $\rightarrow$ LEARN}
+\end{keybox}
+
+\instruction{State explicitly that each prediction was evaluated before the current label was learned. Report Accuracy, Macro-F1, Precision, Recall and the confusion matrix, together with prediction and update cost per event. Explain which class is treated as the positive event class.}
+
+
+% =============================================================================
+\section{Results and Discussion}
+% =============================================================================
+\instruction{Present only the evidence needed to answer the assignment. Interpret results rather than ranking models. Discuss class imbalance, event detection, differences between Representation A and Representation B, model behaviour over time, and computational cost. Connect model evidence back to the stream characteristics identified earlier. At least two analyses or visualisations in the complete report must be original group-designed analyses rather than direct reproductions of the starter-code figures. Suggested length: one to one-and-a-half pages.}
+
+\subsection{Predictive performance - City A}
+\begin{table}[H]
+\centering
+\caption{Final predictive results for \CityA. Report the same evaluation period for every model.}
+\label{tab:city-a-results}
+\begin{tabularx}{0.98\textwidth}{@{}Y C{1.55cm} C{1.55cm} C{1.55cm} C{1.55cm}@{}}
+\toprule
+\textbf{Model} & \textbf{Acc.} & \textbf{Macro-F1} & \textbf{Prec.} & \textbf{Recall} \\
+\midrule
+GaussianNB & -- & -- & -- & -- \\
+Online Logistic & -- & -- & -- & -- \\
+Hoeffding Tree & -- & -- & -- & -- \\
+Online Bagging & -- & -- & -- & -- \\
+Adaptive Random Forest & -- & -- & -- & -- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Predictive performance - City B}
+\begin{table}[H]
+\centering
+\caption{Final predictive results for \CityB. Report the same evaluation period for every model.}
+\label{tab:city-b-results}
+\begin{tabularx}{0.98\textwidth}{@{}Y C{1.55cm} C{1.55cm} C{1.55cm} C{1.55cm}@{}}
+\toprule
+\textbf{Model} & \textbf{Acc.} & \textbf{Macro-F1} & \textbf{Prec.} & \textbf{Recall} \\
+\midrule
+GaussianNB & -- & -- & -- & -- \\
+Online Logistic & -- & -- & -- & -- \\
+Hoeffding Tree & -- & -- & -- & -- \\
+Online Bagging & -- & -- & -- & -- \\
+Adaptive Random Forest & -- & -- & -- & -- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Computational evidence}
+\begin{table}[H]
+\centering
+\caption{Prediction and update cost per event. Report values measured within the same run and environment.}
+\label{tab:cost-results}
+\begin{tabularx}{0.98\textwidth}{@{}Y C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm}@{}}
+\toprule
+& \multicolumn{2}{c}{\textbf{\CityA}} & \multicolumn{2}{c}{\textbf{\CityB}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Model} & \textbf{Pred. ms/event} & \textbf{Update ms/event} & \textbf{Pred. ms/event} & \textbf{Update ms/event} \\
+\midrule
+GaussianNB & -- & -- & -- & -- \\
+Online Logistic & -- & -- & -- & -- \\
+Hoeffding Tree & -- & -- & -- & -- \\
+Online Bagging & -- & -- & -- & -- \\
+Adaptive Random Forest & -- & -- & -- & -- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\reportfigure{figures/model_evidence.png}{Selected model evidence supporting the discussion. Do not use a generic caption such as ``model results''.}{fig:model-evidence}
+
+\instruction{After the tables/figures, explain the relationships you observed. Examples of useful questions: Did higher Accuracy coincide with higher Recall? Did temporal features improve event detection? Did an ensemble provide a meaningful gain relative to its computational cost? Did one city's class distribution make the task more difficult?}
+
+
+% =============================================================================
+\section{Business and Technical Recommendations}
+% =============================================================================
+\instruction{Provide two separate conclusions. The business recommendation must be supported by descriptive, temporal and operational evidence, not by whichever classifier achieved the highest score. The technical recommendation must be supported by predictive and computational evidence. State the scope of each recommendation carefully. Suggested length: about half a page.}
+
+\begin{businessbox}[title=Business Recommendation]
+% REPLACE THIS TEXT WITH YOUR GROUP'S RECOMMENDATION.
+From the weather-related operational perspective defined by \BusinessScenario, state which city appears more suitable, or explain why the available evidence does not support a clear preference. Cite the specific evidence that supports this conclusion.
+\end{businessbox}
+
+\begin{keybox}[title=Technical Recommendation]
+% REPLACE THIS TEXT WITH YOUR GROUP'S RECOMMENDATION.
+Recommend a streaming modelling approach for continuous prediction of \EventTarget. Explain the trade-off between event detection, overall predictive performance, computational cost, and practical complexity.
+\end{keybox}
+
+
+% =============================================================================
+\section{Limitations}
+% =============================================================================
+\instruction{Explain what the study cannot establish. Consider the limited set of weather variables, the selected historical period, the simplified binary event definition, external business factors not included in Open-Meteo, computational measurements being environment-specific, and any modelling assumptions. Do not introduce new results here.}
+
+% WRITE YOUR LIMITATIONS BELOW THIS LINE.
+
+
+% =============================================================================
+\section{AI Assistance Statement}
+% =============================================================================
+\instruction{This statement is mandatory. Adapt one of the formulations below truthfully. Delete the option that does not apply. Generative AI may assist with programming tasks, but it may not perform the interpretation of experimental results, discussion, business recommendation, technical recommendation, or evidence-based conclusions.}
+
+\begin{businessbox}[title=Option A - Generative AI was used for permitted assistance]
+\emph{Generative AI tools were used to assist with [replace with the permitted uses: e.g., Python debugging, plotting syntax, code organisation]. They were not used to interpret experimental results or produce the analysis, discussion, business recommendation, technical recommendation, or evidence-based conclusions.}
+\end{businessbox}
+
+\begin{businessbox}[title=Option B - No generative AI was used]
+\emph{No generative AI tools were used in the preparation of this assignment.}
+\end{businessbox}
+
+
+% =============================================================================
+% REFERENCES
+% =============================================================================
+\section*{References}
+\addcontentsline{toc}{section}{References}
+\instruction{Cite the data source, libraries, algorithms/methods, and any external references used. Add BibTeX entries to \texttt{references.bib} and cite them in the report with commands such as \texttt{\string\parencite\{key\}}. Remove references that are not cited.}
+
+\printbibliography[heading=none]
+
+
+% =============================================================================
+% OPTIONAL APPENDIX
+% =============================================================================
+\clearpage
+\appendix
+\section{Optional Appendix}
+\instruction{Use the appendix only for supporting material that is useful for auditability but not essential to the main argument: additional confusion matrices, parameter grids, supplementary plots, or compact implementation notes. The appendix does not compensate for missing interpretation in the main report. Delete this appendix if it is not needed.}
+
+
+% =============================================================================
+% DRAFT-ONLY SELF-CHECK - DISAPPEARS WHEN draftinstructionsfalse
+% =============================================================================
+\ifdraftinstructions
+\clearpage
+\section*{Template Self-Check Before Final Submission}
+\begin{instructionbox}[title=Turn off template mode only after every item below is satisfied]
+\begin{tabularx}{\textwidth}{@{}C{0.8cm}Y@{}}
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & Metadata on the cover are correct: PA code, students, cities, scenario, target and period. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & The report uses chronological data and documents the warm-up. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & No current target-defining value or future observation is used as an input. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & Thresholds derived from data use pooled warm-up information only and remain frozen during evaluation. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & City A and City B use compatible definitions and evaluation logic. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & The five mandatory models are evaluated with PREDICT $\rightarrow$ EVALUATE $\rightarrow$ LEARN. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & Accuracy is interpreted together with Macro-F1, Precision, Recall and the confusion matrix. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & At least two analyses/visualisations are group-designed rather than direct starter-code reproductions. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & Business and Technical Recommendations are separate and evidence-based. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & Every figure/table included is discussed in the report and has a meaningful caption. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & The AI Assistance Statement is truthful and complete. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & The main body is approximately 6--8 pages after template guidance is hidden. \\
+\fbox{\rule{0pt}{1.0ex}\rule{1.0ex}{0pt}} & \texttt{\string\draftinstructionsfalse} is set before exporting the final PDF. \\
+\end{tabularx}
+\end{instructionbox}
+\fi
+
+\end{document}

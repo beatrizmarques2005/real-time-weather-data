@@ -105,7 +105,7 @@ real-time-weather-data/
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+.venv/Scripts/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 python src/practical_assignment.py --config config.yaml
