@@ -46,3 +46,20 @@ def fetch_city(name, latitude, longitude, start_date, end_date,
     df = df.sort_values("time").reset_index(drop=True)
     df.to_csv(path, index=False)
     return df
+
+
+def quality_report(df):
+    """Missing values, duplicates, gaps and physically invalid values.
+    Extreme values are NOT treated as errors - only report them."""
+    steps = df["time"].diff().dropna()
+    return {
+        "n_rows": len(df),
+        "start": str(df["time"].min()),
+        "end": str(df["time"].max()),
+        "missing": df.isna().sum().to_dict(),
+        "duplicated_timestamps": int(df["time"].duplicated().sum()),
+        "irregular_steps": int((steps != pd.Timedelta(hours=1)).sum()),
+        "humidity_out_of_range": int(((df["relative_humidity"] < 0) | (df["relative_humidity"] > 100)).sum()),
+        "negative_precipitation": int((df["precipitation"] < 0).sum()),
+        "negative_wind": int((df["wind_speed"] < 0).sum()),
+    }
