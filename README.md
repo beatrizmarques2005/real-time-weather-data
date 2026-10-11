@@ -15,7 +15,7 @@
 | Business context | Outdoor Running Event Organiser |
 | Official target | **T6 — Adverse Outdoor Event** |
 | Business question | *Which city offers more reliable weather windows for recurring outdoor races?* |
-| Historical period | 2024-01-01 → 2024-12-31, hourly, UTC (see `config.yaml`) |
+| Historical period | 2021-01-01 → 2026-09-30, hourly, UTC (see `config.yaml`) |
 | Warm-up | first 720 hours (30 days) of each stream |
 
 ## 🎯 Objective
@@ -124,7 +124,7 @@ The script downloads (or reuses cached) data for both cities and prints the data
 
 ## ✅ Progress
 
-- [ ] Register pair and PA48 in Moodle
+- [x] Register pair and PA48 in Moodle
 - [x] Fill in `config.yaml` with the assignment card
 - [ ] Data-quality inspection — Angra do Heroísmo / Braga
 - [ ] Stream characterisation (statistics, temporal evolution, windows, extremes)

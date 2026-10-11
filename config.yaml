@@ -17,8 +17,8 @@ cities:
     longitude: -8.42311
 
 period:
-  start_date: "2024-01-01"
-  end_date: "2024-12-31"
+  start_date: "2021-01-01"
+  end_date: "2026-09-30"
   timezone: "UTC"       # UTC aligns both streams (Azores is UTC-1 vs mainland) and avoids DST duplicates/gaps
 
 warmup:
@@ -45,5 +45,12 @@ students:
     primary_city: "Braga"
 
 paths:
+  data_url: https://archive-api.open-meteo.com/v1/archive
   raw_data: data/raw
   results: results
+
+hourly_vars:
+  temperature_2m: "temperature"
+  relative_humidity_2m: "relative_humidity"
+  precipitation: "precipitation"
+  wind_speed_10m: "wind_speed"
