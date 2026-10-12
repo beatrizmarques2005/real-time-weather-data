@@ -1,4 +1,15 @@
-"""Main experiment: 2 cities x 2 representations x 5 mandatory models (+ baselines)."""
+"""Main experiment: 2 cities x 2 representations x 5 mandatory models (+ baselines).
+
+Course alignment (W04 + Guidelines Ch. 12):
+- Chronological replay only; no shuffling and no random train/test split.
+- Shared warm-up: the same first `warmup.n_hours` rows fix the pooled frozen threshold and are
+  learned but not scored, with an identical warm-up mask for every learner.
+- Identical evaluated rows (shared `valid` mask) for every model and both representations.
+- A fresh model instance for every run, fixed seed.
+- Audit output: metrics.csv, history.csv.gz and configurations.csv (package versions + config).
+- Interpretation of results is the students' work (Guidelines Ch. 16); the >=2 original
+  analyses (Guidelines 3.2) live in the notebooks.
+"""
 import argparse
 import platform
 import random
@@ -13,7 +24,7 @@ import yaml
 
 from data_loader import fetch_city, quality_report
 from features import representation_a, representation_b
-from models import build_baselines, build_models
+from models import build_baselines, build_models, model_complexity
 from plots import generate_plots
 from prequential import run_prequential
 from targets import compute_thresholds, make_target
@@ -43,6 +54,7 @@ def main(config_path):
         data[key] = df
 
     # 2. Frozen thresholds from pooled warm-up
+    # Frozen once, before any evaluation (Guidelines Ch. 12).
     thresholds = compute_thresholds(data["city_a"], data["city_b"], warm_n, target)
     print("Frozen thresholds:", thresholds, flush=True)
 
@@ -53,6 +65,7 @@ def main(config_path):
         y = make_target(df, target, thresholds)
         reps = {"A": representation_a(df),
                 "B": representation_b(df, cfg["features"]["windows"], y=y)}
+        # W04 pitfall "different histories": one shared mask -> same rows for every learner.
         valid = reps["B"].notna().all(axis=1) & y.notna()
         is_warm = pd.Series(df.index < warm_n, index=df.index)
         for rep_name, X in reps.items():
@@ -67,7 +80,8 @@ def main(config_path):
                     window_size=window_size, timestamps=df.loc[valid, "time"].tolist(),
                     track_memory=track_memory)
                 rows.append({"city": city, "representation": rep_name,
-                             "model": model_name, "role": role, **res})
+                             "model": model_name, "role": role, **res,
+                             **model_complexity(model)})
                 history = history.assign(city=city, representation=rep_name,
                                          model=model_name, role=role)
                 histories.append(history)
