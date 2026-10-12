@@ -1,4 +1,9 @@
-"""Retrieve hourly Open-Meteo history and run basic data-quality checks."""
+"""Retrieve hourly Open-Meteo history and run basic data-quality checks.
+
+Course alignment (W01/W02, Guidelines Ch. 9 and 12): collect once, save a raw snapshot, replay
+many times; quality checks report missing values, duplicates, gaps and physically invalid values.
+Extremes are valid observations and are only reported, never removed.
+"""
 from pathlib import Path
 
 import pandas as pd
