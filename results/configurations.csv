@@ -3,11 +3,11 @@ assignment_code,PA48
 target,T6
 city_a,Angra do Heroismo
 city_b,Braga
-start_date,2024-01-01
-end_date,2024-12-31
+start_date,2021-01-01
+end_date,2026-09-30
 warmup_hours,720
 seed,42
-thresholds,{'T5': 18.9}
+thresholds,{'T5': 26.9}
 window_size,168
 track_memory,False
 include_baselines,True
