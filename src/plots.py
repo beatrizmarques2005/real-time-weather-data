@@ -1,10 +1,16 @@
-"""Descriptive performance and cost figures (no interpretation)."""
+"""Descriptive performance and cost figures (no interpretation).
+
+Figures carry no interpretive text: interpretation and the >=2 original analyses are the
+students' work (Guidelines 3.2 and Ch. 16). The time-performance trade-off figure answers the
+professor's note on evaluating models by cost as well as performance.
+"""
 from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
 import pandas as pd
 
@@ -35,7 +41,7 @@ def _lines(ax, subset, column, names, colors):
 
 
 def generate_plots(history, metrics, output_dir):
-    """Write the six assignment figures to output_dir."""
+    """Write the seven assignment figures to output_dir."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     history = history.copy()
@@ -137,3 +143,24 @@ def generate_plots(history, metrics, output_dir):
     fig.legend(handles, labels, loc="outside lower center", ncol=2)
     fig.suptitle("Processing cost (frozen update = 0)")
     _save(fig, output_dir / "processing_cost.png")
+
+    fig, axes = plt.subplots(1, len(cities), figsize=(14, 5.5), sharey=True,
+                             layout="constrained", squeeze=False)
+    rep_markers = dict(zip(reps, ["o", "s", "^", "D"]))
+    for ax, city in zip(axes[0], cities):
+        for row in metrics[metrics.city == city].itertuples():
+            cost = row.pred_ms_per_event + row.update_ms_per_event
+            ax.scatter(cost, row.macro_f1, s=70, color=colors[row.model],
+                       marker=rep_markers[row.representation],
+                       edgecolors="black" if row.role == "mandatory" else "none")
+        ax.set_xscale("log")
+        ax.set_xlabel("Predict + update time (ms per evaluated event, log scale)")
+        ax.set_ylabel("Cumulative Macro-F1")
+        ax.set_title(city)
+        ax.grid(alpha=0.25, which="both")
+    handles = [Line2D([], [], marker="o", linestyle="", color=colors[n], label=n) for n in names]
+    handles += [Line2D([], [], marker=m, linestyle="", color="grey", label=f"Rep {r}")
+                for r, m in rep_markers.items()]
+    fig.legend(handles=handles, loc="outside lower center", ncol=6, fontsize=9)
+    fig.suptitle("Time-performance trade-off (black edge = mandatory model)")
+    _save(fig, output_dir / "time_performance_tradeoff.png")
