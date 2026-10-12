@@ -1,4 +1,11 @@
-"""Leakage-free feature representations. Everything ends at t-1."""
+"""Leakage-free feature representations. Everything ends at t-1.
+
+Course alignment (Guidelines Ch. 8, W03):
+- Representation A: previous state x(t-1).
+- Representation B: A + past-only deltas, rolling mean/std, rain-hour counts and the rate of
+  already-revealed past events. The 6/24-hour windows are our choice (config.yaml).
+- Target-defining values at t (precipitation, wind speed) are never predictors at t.
+"""
 import pandas as pd
 
 BASE = ["temperature", "relative_humidity", "precipitation", "wind_speed"]
