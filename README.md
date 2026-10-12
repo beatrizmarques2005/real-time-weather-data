@@ -73,7 +73,7 @@ Every feature uses only observations up to `t-1`.
 - Fresh model instances for every run, with a fixed random seed
 
 ### Metrics
-Accuracy, Macro-F1, Precision and Recall (adverse-event class), confusion matrix, and **prediction time / update time per event** and throughput. Every metric is tracked **cumulatively** and over a **sliding window of the last 168 evaluated predictions (1 week)**, using an incremental confusion matrix. At the end of each run the cumulative metrics are checked against a batch scikit-learn computation. See `docs/course_alignment.md` for the mapping to Week 4 and the Guidelines.
+Accuracy, Macro-F1, Precision and Recall (adverse-event class), confusion matrix, and **prediction time / update time per event** and throughput. Every metric is tracked **cumulatively** and over a **sliding window of the last 168 evaluated predictions (1 week)**, using an incremental confusion matrix. At the end of each run the cumulative metrics are checked against a batch scikit-learn computation. Each module's docstring states which Week 4–6 concept and Guidelines rule it implements.
 
 ## 📁 Repository Structure
 
@@ -82,7 +82,6 @@ real-time-weather-data/
 ├── README.md
 ├── config.yaml              # PA48 card, cities, period, warm-up, seed
 ├── requirements.txt
-├── docs/course_alignment.md  # Week 4 + Guidelines → code mapping
 ├── data/
 │   └── raw/                 # Open-Meteo snapshots (cached CSVs)
 ├── notebooks/               # city-level EDA and figures
@@ -96,9 +95,9 @@ real-time-weather-data/
     ├── data_loader.py            # retrieval + data-quality checks
     ├── targets.py                # T1–T6 + frozen warm-up thresholds
     ├── features.py               # Representations A and B (leakage-free)
-    ├── models.py                 # five mandatory learners
-    └── prequential.py            # predict → evaluate → learn loop
-    ├── plots.py                  # performance, confusion-matrix and cost figures
+    ├── models.py                 # five mandatory learners + baselines + complexity
+    ├── prequential.py            # predict → evaluate → learn loop
+    └── plots.py                  # performance, confusion-matrix, cost and trade-off figures
 ```
 
 ## ⚙️ Setup & Reproduction
@@ -120,7 +119,7 @@ The script downloads (or reuses cached) data for both cities and prints the data
 | Python | *fill in (e.g. 3.11)* |
 | Package versions | recorded automatically in `results/configurations.csv` |
 | Random seed | `42` |
-| Historical period | 2024-01-01 → 2024-12-31 (UTC) |
+| Historical period | 2021-01-01 → 2026-09-30 (UTC) |
 
 ## ✅ Progress
 
