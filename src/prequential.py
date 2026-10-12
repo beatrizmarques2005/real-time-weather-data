@@ -1,4 +1,17 @@
-"""Test-then-train evaluation with exact cumulative and recent confusion matrices."""
+"""Test-then-train evaluation with exact cumulative and recent confusion matrices.
+
+Course alignment (W04, Guidelines Ch. 11):
+- Prequential protocol: PREDICT -> EVALUATE -> LEARN, one event at a time, in chronological order.
+- Warm-up events are learned but not scored; frozen models stop learning after warm-up.
+- Metrics are state: an incremental confusion matrix (update/remove) instead of batch recomputation.
+- Cumulative vs recent performance: exact last-N window backed by a deque.
+- "Accuracy is not the whole story": Macro-F1 (mean of both class F1s), event-class precision/recall
+  and confusion counts are all reported.
+- Computational cost: prediction and update time per evaluated event, throughput, optional
+  tracemalloc peak memory (timings are environment-dependent).
+- W04 Challenge 03 checkpoints 5 and 7: confusion counts sum to n_eval, and final metrics are
+  asserted equal to batch scikit-learn values (tolerance 1e-9).
+"""
 from collections import deque
 import time
 import tracemalloc
@@ -146,6 +159,7 @@ def run_prequential(model, X, y, is_warmup, online=True, window_size=168,
 
     cm = evaluator.cumulative
     n_eval = cm.n
+    # Challenge 03 checkpoint 5: counts add up; checkpoint 7: match batch scikit-learn.
     assert cm.tp + cm.fp + cm.tn + cm.fn == n_eval
     if n_eval:
         expected = {
