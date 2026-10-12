@@ -1,4 +1,8 @@
-"""Official targets T1-T6. Thresholds come from POOLED WARM-UP data only and are frozen."""
+"""Official targets T1-T6. Thresholds come from POOLED WARM-UP data only and are frozen.
+
+Course alignment (Guidelines Ch. 7 and 12): thresholds are estimated once from the warm-up rows
+of BOTH cities pooled, then frozen; values at t are used only to build the label y_t.
+"""
 import pandas as pd
 
 RAIN_MM = 0.1
