@@ -54,3 +54,43 @@ hourly_vars:
   relative_humidity_2m: "relative_humidity"
   precipitation: "precipitation"
   wind_speed_10m: "wind_speed"
+
+targets:
+  rain_threshold_mm: 0.1
+  definitions:
+    T1:
+      type: "threshold"
+      variable: "precipitation"
+      threshold: 0.1
+      operator: ">="
+    T2:
+      type: "quantile"
+      variable: "temperature"
+      quantile: 0.80
+      operator: ">="
+    T3:
+      type: "quantile"
+      variable: "temperature"
+      quantile: 0.20
+      operator: "<="
+    T4:
+      type: "quantile"
+      variable: "relative_humidity"
+      quantile: 0.50
+      operator: ">="
+    T5:
+      type: "quantile"
+      variable: "wind_speed"
+      quantile: 0.80
+      operator: ">="
+    T6:
+      type: "composite_or"
+      rules:
+        - variable: "precipitation"
+          type: "threshold"
+          threshold: 0.1
+          operator: ">="
+        - variable: "wind_speed"
+          type: "quantile"
+          quantile: 0.80
+          operator: ">="
