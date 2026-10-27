@@ -45,11 +45,13 @@ def model_complexity(model):
     """
     is_ensemble = isinstance(model, base.Ensemble)
     members = list(model) if is_ensemble else [model]
-    trees = [m for m in members if hasattr(m, "n_nodes")]
+    # A tree that has just been reset (e.g. an ARF member replaced after a drift) may report
+    # n_nodes/height as None; such members are skipped instead of crashing the summary.
+    trees = [m for m in members if getattr(m, "n_nodes", None) is not None]
     out = {
         "n_members": len(members) if is_ensemble else math.nan,
         "total_tree_nodes": sum(t.n_nodes for t in trees) if trees else math.nan,
-        "mean_tree_height": sum(t.height for t in trees) / len(trees) if trees else math.nan,
+        "mean_tree_height": (sum(t.height or 0 for t in trees) / len(trees)) if trees else math.nan,
         "drifts_detected": math.nan,
         "warnings_detected": math.nan,
     }
