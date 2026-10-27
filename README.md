@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | Assignment code | `PA48` |
-| Group | `GroupYY` |
+| Group | `GroupYY` — **to fill in** (`config.yaml → assignment.group`) |
 | City A | Angra do Heroísmo (Terceira, Azores) — 38.6539, -27.2184 |
 | City B | Braga (mainland, North) — 41.5514, -8.4231 |
 | Business context | Outdoor Running Event Organiser |
@@ -72,6 +72,18 @@ Every feature uses only observations up to `t-1`.
 - All models and both representations of a city share the **same evaluation history**
 - Fresh model instances for every run, with a fixed random seed
 
+### Stream characterisation and original analyses
+`src/stream_analysis.py` applies **the same definitions to both cities** and writes `results/stream_summary.csv` plus three figures. Extremes are counted and dated, never removed.
+
+| ID | Original analysis (Guidelines 3.2) | Output |
+|---|---|---|
+| O1 | **Race-window reliability**: share of days whose local 08:00–12:00 window (`config.yaml → analysis.race_window`) has no adverse hour, overall and by month | `city_comparison.png` (a), `stream_summary.csv` |
+| O2 | **Adverse / clear spell persistence**: run-length distributions, survival curves and $P(y_t=1\mid y_{t-1}=1)$ | `city_comparison.png` (b), `city_*_stream_profile.png` (d) |
+| O3 | **When and why**: event rate by local hour and by month, split by source (rain only / wind only / both) | `city_*_stream_profile.png` (b, c) |
+| O4 | **Representation effect vs cost**: ΔMacro-F1 and Δrecall (Rep B − Rep A) next to the cost multiplier | `model_evidence.png` |
+
+Local hours use `Atlantic/Azores` (Angra) and `Europe/Lisbon` (Braga) for description only; the stream and all features stay in UTC.
+
 ### Metrics
 Accuracy, Macro-F1, Precision and Recall (adverse-event class), confusion matrix, and **prediction time / update time per event** and throughput. Every metric is tracked **cumulatively** and over a **sliding window of the last 168 evaluated predictions (1 week)**, using an incremental confusion matrix. At the end of each run the cumulative metrics are checked against a batch scikit-learn computation. Each module's docstring states which Week 4–6 concept and Guidelines rule it implements.
 
@@ -84,20 +96,22 @@ real-time-weather-data/
 ├── requirements.txt
 ├── data/
 │   └── raw/                 # Open-Meteo snapshots (cached CSVs)
-├── notebooks/               # city-level EDA and figures
+├── notebooks/               # 01 data & quality · 02 target & features · 03 prequential · 04 results & original analyses
 ├── results/
 │   ├── metrics.csv
 │   ├── configurations.csv
 │   ├── history.csv.gz       # cumulative + window metrics per evaluated event
+│   ├── stream_summary.csv   # descriptive / event / persistence statistics per city
 │   └── figures/
 └── src/
     ├── practical_assignment.py   # main experiment
     ├── data_loader.py            # retrieval + data-quality checks
-    ├── targets.py                # T1–T6 + frozen warm-up thresholds
+    ├── targets.py                # T1–T6 read from config.yaml + frozen warm-up thresholds
     ├── features.py               # Representations A and B (leakage-free)
     ├── models.py                 # five mandatory learners + baselines + complexity
     ├── prequential.py            # predict → evaluate → learn loop
-    └── plots.py                  # performance, confusion-matrix, cost and trade-off figures
+    ├── plots.py                  # performance, confusion-matrix, cost and trade-off figures
+    └── stream_analysis.py        # city profiles, stream_summary.csv, original analyses O1–O4
 ```
 
 ## ⚙️ Setup & Reproduction
@@ -110,14 +124,22 @@ pip install -r requirements.txt
 python src/practical_assignment.py --config config.yaml
 ```
 
-The script downloads (or reuses cached) data for both cities and prints the data-quality reports and the frozen wind threshold. It then writes `results/metrics.csv`, `results/configurations.csv`, `results/history.csv.gz` and the figures in `results/figures/`.
+The script downloads (or reuses cached) data for both cities and prints the data-quality reports and the frozen wind threshold. It then writes `results/stream_summary.csv`, `results/metrics.csv`, `results/configurations.csv`, `results/history.csv.gz` and the eleven figures in `results/figures/`. Paths resolve from the repository root, so the command also works from inside `src/`. A full run takes roughly 10–15 minutes (ARF and Online Bagging are the slowest learners).
+
+Notebooks `01`–`04` reproduce the same steps one at a time; run them in order from the `notebooks/` folder.
+
+## 📦 Audit package
+
+The audit ZIP follows Guidelines 15.1: `README.md`, `config.yaml`, `requirements.txt`, `src/`, `notebooks/`, `data/raw/` (cached Open-Meteo snapshots) and `results/` (`metrics.csv`, `configurations.csv`, `stream_summary.csv`, `history.csv.gz`, `figures/`). Do not include virtual environments or `guidelines.pdf`.
 
 ## 🔁 Reproducibility
 
 | Item | Value |
 |---|---|
-| Python | *fill in (e.g. 3.11)* |
-| Package versions | recorded automatically in `results/configurations.csv` |
+| Python | 3.13 (recorded in `results/configurations.csv`) |
+| Key packages | `river 0.26.1`, `scikit-learn`, `pandas`, `numpy`, `matplotlib` — exact versions recorded in `results/configurations.csv` |
+| Frozen threshold | τ<sub>W</sub> = 26.9 km/h (pooled warm-up Q0.80 of wind speed) |
+| Evaluated events | 49,656 per city (identical for every model and representation) |
 | Random seed | `42` |
 | Historical period | 2021-01-01 → 2026-09-30 (UTC) |
 
@@ -125,13 +147,14 @@ The script downloads (or reuses cached) data for both cities and prints the data
 
 - [x] Register pair and PA48 in Moodle
 - [x] Fill in `config.yaml` with the assignment card
-- [ ] Data-quality inspection — Angra do Heroísmo / Braga
-- [ ] Stream characterisation (statistics, temporal evolution, windows, extremes)
-- [ ] T6 target construction and class distribution
-- [ ] Prequential experiment: 2 cities × 2 representations × 5 models
-- [ ] ≥ 2 original analyses / visualisations
+- [x] Data-quality inspection — Angra do Heroísmo / Braga
+- [x] Stream characterisation (statistics, temporal evolution, windows, extremes)
+- [x] T6 target construction and class distribution
+- [x] Prequential experiment: 2 cities × 2 representations × 5 models (+ 3 reference baselines)
+- [x] ≥ 2 original analyses / visualisations (O1–O4)
+- [ ] Interpretation: notebook *Insights* cells and report discussion — **students only** (Guidelines Ch. 16)
 - [ ] Report (6–8 pages) + AI Assistance Statement
-- [ ] `PA48_GroupYY_Report.pdf` + `PA48_GroupYY_Audit.zip`
+- [ ] Group number in `config.yaml`, then `PA48_GroupYY_Report.pdf` + `PA48_GroupYY_Audit.zip`
 
 ## 👥 Team
 
