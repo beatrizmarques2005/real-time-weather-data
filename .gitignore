@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# LaTeX build files (report/)
+report/*.aux
+report/*.log
+report/*.bbl
+report/*.bcf
+report/*.blg
+report/*.run.xml
+report/*.out
+report/*.pdf
