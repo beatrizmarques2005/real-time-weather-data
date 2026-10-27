@@ -87,4 +87,3 @@ def make_target(df, target, thresholds, targets_cfg=None):
 
     y = y.astype(float).where(df[src].notna().all(axis=1))  # keep missing as NaN
     return y.rename("y")
-
