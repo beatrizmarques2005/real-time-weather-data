@@ -22,16 +22,17 @@ import river
 import sklearn
 import yaml
 
-from data_loader import fetch_city, quality_report
+from data_loader import ROOT, fetch_city, quality_report
 from features import representation_a, representation_b
 from models import build_baselines, build_models, model_complexity
 from plots import generate_plots
 from prequential import run_prequential
+from stream_analysis import plot_model_evidence, run_stream_analysis
 from targets import compute_thresholds, make_target
 
 
 def main(config_path):
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     seed = cfg["seed"]
     random.seed(seed)
@@ -41,7 +42,7 @@ def main(config_path):
     window_size = cfg["evaluation"]["window_size"]
     track_memory = cfg["evaluation"]["track_memory"]
     include_baselines = cfg["baselines"]["include"]
-    out = Path(cfg["paths"]["results"])
+    out = ROOT / cfg["paths"]["results"]   # paths resolve from the repo root, not the cwd
     out.mkdir(parents=True, exist_ok=True)
 
     # 1. Data
@@ -49,20 +50,28 @@ def main(config_path):
     for key in ("city_a", "city_b"):
         c = cfg["cities"][key]
         df = fetch_city(c["name"], c["latitude"], c["longitude"], period["start_date"],
-                        period["end_date"], period["timezone"], cfg["paths"]["raw_data"])
+                        period["end_date"], period["timezone"], ROOT / cfg["paths"]["raw_data"])
         print(f"[{c['name']}] quality:", quality_report(df), flush=True)
         data[key] = df
 
     # 2. Frozen thresholds from pooled warm-up
     # Frozen once, before any evaluation (Guidelines Ch. 12).
-    thresholds = compute_thresholds(data["city_a"], data["city_b"], warm_n, target)
+    thresholds = compute_thresholds(data["city_a"], data["city_b"], warm_n, target, cfg["targets"])
     print("Frozen thresholds:", thresholds, flush=True)
+    labels = {key: make_target(df, target, thresholds, cfg["targets"]) for key, df in data.items()}
+    names = {key: cfg["cities"][key]["name"] for key in data}
+
+    # 2b. Stream characterisation + original analyses (descriptive only)
+    summary = run_stream_analysis(data, labels, names, thresholds, cfg, out)
+    print("Stream summary saved:", out / "stream_summary.csv", flush=True)
+    print(summary.loc[["event_rate", "race_window_reliability", "persistence_p11",
+                       "adverse_spell_mean_h"]].to_string(), flush=True)
 
     # 3. Identical evaluated rows for every learner and representation.
     rows, histories = [], []
     for key, df in data.items():
         city = cfg["cities"][key]["name"]
-        y = make_target(df, target, thresholds)
+        y = labels[key]
         reps = {"A": representation_a(df),
                 "B": representation_b(df, cfg["features"]["windows"], y=y)}
         # W04 pitfall "different histories": one shared mask -> same rows for every learner.
@@ -101,21 +110,24 @@ def main(config_path):
         "city_a": cfg["cities"]["city_a"]["name"], "city_b": cfg["cities"]["city_b"]["name"],
         "start_date": period["start_date"], "end_date": period["end_date"],
         "warmup_hours": warm_n, "seed": seed, "thresholds": thresholds,
-        "window_size": window_size, "track_memory": track_memory,
+        "window_size": window_size, "features_windows": cfg["features"]["windows"],
+        "race_window": cfg["analysis"]["race_window"], "platform": platform.platform(), "track_memory": track_memory,
         "include_baselines": include_baselines,
         "python": platform.python_version(), "river": river.__version__,
         "scikit-learn": sklearn.__version__, "matplotlib": matplotlib.__version__,
         "pandas": pd.__version__, "numpy": np.__version__,
-        **{f"model_{k}": repr(v) for k, v in build_models(seed).items()},
-        **{f"baseline_{k}": f"{repr(v)}; online={online}"
+        # _get_params() records ensembles too (repr of an untrained ensemble is an empty list).
+        **{f"model_{k}": str(v._get_params()) for k, v in build_models(seed).items()},
+        **{f"baseline_{k}": f"{v._get_params()}; online={online}"
            for k, (v, online) in build_baselines(seed).items()},
     }
     pd.Series(config_rows).to_csv(out / "configurations.csv", header=["value"])
     generate_plots(history_df, metrics_df, out / "figures")
+    plot_model_evidence(metrics_df, out / "figures" / "model_evidence.png")
     print(f"Saved results to {out}/", flush=True)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="config.yaml")
+    parser.add_argument("--config", default=str(ROOT / "config.yaml"))
     main(parser.parse_args().config)
