@@ -1,7 +1,7 @@
 # Assignment card PA48 (Guidelines, Chapter 19).
 assignment:
   code: PA48
-  group: GroupYY        # fill in Moodle group number
+  group: GroupYY        # TODO: replace YY with the Moodle group number (used in submission file names)
   business_context: "Outdoor Running Event Organiser"
   business_question: "Which city offers more reliable weather windows for recurring outdoor races?"
   target: T6            # Adverse Outdoor Event: rain (P >= 0.1 mm) OR strong wind (W >= pooled warm-up Q0.80)
@@ -11,10 +11,12 @@ cities:
     name: "Angra do Heroismo"
     latitude: 38.6539
     longitude: -27.21839
+    local_timezone: "Atlantic/Azores"   # used only to describe local race hours (analysis)
   city_b:               # Student B - Duarte Fernandes
     name: "Braga"
     latitude: 41.5514
     longitude: -8.42311
+    local_timezone: "Europe/Lisbon"
 
 period:
   start_date: "2021-01-01"
@@ -30,6 +32,14 @@ features:
 evaluation:
   window_size: 168      # recent-performance window: last 168 evaluated predictions = 1 week of hourly events
   track_memory: false   # tracemalloc peak memory (slows the run; turn on for the computational section)
+
+analysis:                # descriptive stream analysis + original analyses (src/stream_analysis.py)
+  race_window:
+    start_hour: 8         # local time; typical morning road-race slot (start + finish)
+    n_hours: 4            # 08:00-12:00 local
+  extremes:               # reported, never removed (Guidelines Ch. 9)
+    wind_kmh: 40
+    precip_mm: 5
 
 baselines:
   include: true         # reference learners - NOT part of the five mandatory models
