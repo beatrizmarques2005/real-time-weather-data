@@ -1,15 +1,17 @@
-"""Official targets T1-T6, defined in config.yaml (`targets.definitions`).
-
-Course alignment (Guidelines Ch. 6, 7 and 12):
-- Data-derived thresholds are estimated ONCE from the warm-up rows of BOTH cities pooled,
-  then frozen; they are never recomputed on evaluation data.
-- Values observed at time t are used ONLY to build the label y_t, never as predictors at t.
-
-Threshold keys returned by `compute_thresholds`:
-- quantile target (T2-T5): ``{"T5": tau}``
-- composite target (T6):   ``{"T6_rule_1": tau_W, "T5": tau_W}`` - the ``"T5"`` alias keeps the
-  wind threshold readable under its official name (T6 = T1 OR T5).
 """
+TARGETS
+-------
+
+Build the official targets T1-T6 from `config.yaml -> targets.definitions`.
+
+Rules:
+- Data-derived thresholds are estimated ONCE from the warm-up rows of BOTH
+  cities pooled, then frozen. They are never recomputed on evaluation data.
+- Values observed at time t only build the label y_t. They are never used
+  as predictors at t.
+  
+"""
+
 import operator
 
 import pandas as pd
@@ -26,7 +28,6 @@ OPERATORS = {
 
 RAIN_MM = CONFIG["targets"].get("rain_threshold_mm", 0.1)
 
-# Official quantile targets that a composite rule may reuse (variable, quantile) -> target id.
 _OFFICIAL_QUANTILES = {("temperature", 0.80): "T2", ("temperature", 0.20): "T3",
                        ("relative_humidity", 0.50): "T4", ("wind_speed", 0.80): "T5"}
 

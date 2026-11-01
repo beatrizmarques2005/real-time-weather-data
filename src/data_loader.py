@@ -1,8 +1,15 @@
-"""Retrieve hourly Open-Meteo history and run basic data-quality checks.
+"""
+DATA LOADER
+-----------
 
-Course alignment (W01/W02, Guidelines Ch. 9 and 12): collect once, save a raw snapshot, replay
-many times; quality checks report missing values, duplicates, gaps and physically invalid values.
-Extremes are valid observations and are only reported, never removed.
+Retrieve hourly Open-Meteo history and run basic data-quality checks.
+
+Builds on: course weeks W01 and W02.
+
+Notes:
+- collect once, save a raw snapshot, replay many times; 
+- quality checks report missing values, duplicates, gaps and physically invalid values.
+
 """
 from pathlib import Path
 
@@ -10,7 +17,7 @@ import pandas as pd
 import requests
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]          # repo root (src/ -> ..)
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_config(path=ROOT / "config.yaml"):

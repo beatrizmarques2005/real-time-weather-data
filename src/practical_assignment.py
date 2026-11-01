@@ -1,14 +1,28 @@
-"""Main experiment: 2 cities x 2 representations x 5 mandatory models (+ baselines).
+"""
+PRACTICAL ASSIGNMENT
+--------------------
 
-Course alignment (W04 + Guidelines Ch. 12):
+Main experiment: 2 cities x 2 representations x 5 mandatory models
+(+ optional reference baselines), evaluated with the prequential protocol
+(PREDICT -> EVALUATE -> LEARN).
+
+Notes:
 - Chronological replay only; no shuffling and no random train/test split.
-- Shared warm-up: the same first `warmup.n_hours` rows fix the pooled frozen threshold and are
-  learned but not scored, with an identical warm-up mask for every learner.
-- Identical evaluated rows (shared `valid` mask) for every model and both representations.
-- A fresh model instance for every run, fixed seed.
-- Audit output: metrics.csv, history.csv.gz and configurations.csv (package versions + config).
-- Interpretation of results is the students' work (Guidelines Ch. 16); the >=2 original
-  analyses (Guidelines 3.2) live in the notebooks.
+- Shared warm-up: the first `warmup.n_hours` rows fix the pooled frozen
+  threshold and are learned but not scored, with an identical warm-up mask
+  for every learner.
+- Identical evaluated rows (shared `valid` mask) for every model and both
+  representations.
+- A fresh model instance for every run, with a fixed seed.
+
+Outputs (audit package):
+- metrics.csv, history.csv.gz and configurations.csv (package versions and
+  config), written to `results/`.
+
+Usage:
+    python src/practical_assignment.py --config config.yaml
+
+Builds on: course week W04.
 """
 import argparse
 import platform
@@ -42,7 +56,7 @@ def main(config_path):
     window_size = cfg["evaluation"]["window_size"]
     track_memory = cfg["evaluation"]["track_memory"]
     include_baselines = cfg["baselines"]["include"]
-    out = ROOT / cfg["paths"]["results"]   # paths resolve from the repo root, not the cwd
+    out = ROOT / cfg["paths"]["results"]
     out.mkdir(parents=True, exist_ok=True)
 
     # 1. Data
@@ -55,7 +69,7 @@ def main(config_path):
         data[key] = df
 
     # 2. Frozen thresholds from pooled warm-up
-    # Frozen once, before any evaluation (Guidelines Ch. 12).
+    # Frozen once, before any evaluation
     thresholds = compute_thresholds(data["city_a"], data["city_b"], warm_n, target, cfg["targets"])
     print("Frozen thresholds:", thresholds, flush=True)
     labels = {key: make_target(df, target, thresholds, cfg["targets"]) for key, df in data.items()}
@@ -74,7 +88,6 @@ def main(config_path):
         y = labels[key]
         reps = {"A": representation_a(df),
                 "B": representation_b(df, cfg["features"]["windows"], y=y)}
-        # W04 pitfall "different histories": one shared mask -> same rows for every learner.
         valid = reps["B"].notna().all(axis=1) & y.notna()
         is_warm = pd.Series(df.index < warm_n, index=df.index)
         for rep_name, X in reps.items():
@@ -116,7 +129,6 @@ def main(config_path):
         "python": platform.python_version(), "river": river.__version__,
         "scikit-learn": sklearn.__version__, "matplotlib": matplotlib.__version__,
         "pandas": pd.__version__, "numpy": np.__version__,
-        # _get_params() records ensembles too (repr of an untrained ensemble is an empty list).
         **{f"model_{k}": str(v._get_params()) for k, v in build_models(seed).items()},
         **{f"baseline_{k}": f"{v._get_params()}; online={online}"
            for k, (v, online) in build_baselines(seed).items()},

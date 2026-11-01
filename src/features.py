@@ -1,14 +1,29 @@
-"""Leakage-free feature representations. Everything ends at t-1.
-
-Course alignment (Guidelines Ch. 8, W03):
-- Representation A: previous state x(t-1).
-- Representation B: A + past-only deltas, rolling mean/std, rain-hour counts and the rate of
-  already-revealed past events. The 6/24-hour windows are our choice (config.yaml).
-- Target-defining values at t (precipitation, wind speed) are never predictors at t.
 """
+FEATURES
+--------
+
+Build leakage-free feature representations for the prequential loop.
+Every feature uses only observations available up to t-1.
+
+Builds on: course week W03.
+
+Representations:
+- A (previous state): x(t-1) for each weather variable.
+- B (stream-aware context): A plus past-only deltas, rolling mean and std,
+  rainy-hour counts, and the rate of already-revealed past adverse events.
+
+Rule:
+- precipitation(t) and wind_speed(t) define the target, so they are never
+  used as predictors at time t.
+
+"""
+
 import pandas as pd
 
-BASE = ["temperature", "relative_humidity", "precipitation", "wind_speed"]
+BASE = ["temperature", 
+        "relative_humidity", 
+        "precipitation", 
+        "wind_speed"]
 
 
 def representation_a(df):
@@ -33,6 +48,6 @@ def representation_b(df, windows=(6, 24), y=None, rain_mm=0.1):
             X[f"{c}_mean{w}"] = past[c].rolling(w).mean()
             X[f"{c}_std{w}"] = past[c].rolling(w).std()
         X[f"rain_hours_{w}"] = rainy.rolling(w).sum()
-        if y is not None:  # labels up to t-1 are already revealed in the stream
+        if y is not None:
             X[f"event_rate_{w}"] = y.shift(1).rolling(w).mean()
     return X

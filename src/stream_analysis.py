@@ -1,19 +1,17 @@
-"""Stream characterisation and the group-designed (original) analyses.
+"""
+STREAM ANALYSIS
+---------------
 
-Course alignment (Guidelines Ch. 9 and 3.2):
-- Same analytical logic for both cities: data quality, descriptive statistics, temporal
-  evolution, target frequency, rolling/window behaviour, extremes and a business-linked view.
-- Extremes are valid observations: they are counted and dated, never removed.
-- Descriptive only: the code computes evidence; interpretation is the students' work (Ch. 16).
+Characterise both weather streams and run the original analyses (O1-O4).
+Writes `results/stream_summary.csv` and the stream-profile and comparison figures.
 
-Original analyses (not starter-code reproductions):
-- O1  Race-window reliability: share of days whose local race window (config `analysis`) has
-      no adverse hour, overall and by calendar month.
-- O2  Adverse-spell persistence: duration distribution of consecutive adverse / clear hours and
-      the persistence probability P(y_t = 1 | y_{t-1} = 1).
-- O3  Local hour-of-day and calendar-month event profiles split by event source (rain/wind/both).
-- O4  Representation effect vs cost: Macro-F1 / recall change from Rep A to Rep B next to the
-      change in processing cost (see `plot_model_evidence`).
+Same logic for both cities. Extremes are counted and dated, never removed.
+
+Original analyses:
+- O1  Race-window reliability, overall and by month.
+- O2  Adverse/clear spell persistence, P(y_t = 1 | y_{t-1} = 1).
+- O3  Hour-of-day and monthly event profiles, split by source (rain/wind/both).
+- O4  Representation effect (Rep A vs B) vs processing cost.
 """
 from pathlib import Path
 

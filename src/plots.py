@@ -1,9 +1,15 @@
-"""Descriptive performance and cost figures (no interpretation).
-
-Figures carry no interpretive text: interpretation and the >=2 original analyses are the
-students' work (Guidelines 3.2 and Ch. 16). The time-performance trade-off figure answers the
-professor's note on evaluating models by cost as well as performance.
 """
+PLOTS
+-----
+
+Generate the descriptive performance and cost figures: windowed performance,
+confusion matrices, prediction/update cost, and the time-performance trade-off.
+
+The time-performance trade-off figure exists so that models are compared by
+computational cost as well as by predictive performance.
+
+"""
+
 from pathlib import Path
 
 import matplotlib

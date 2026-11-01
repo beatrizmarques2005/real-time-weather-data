@@ -1,12 +1,17 @@
-"""Export the report's tables and figures from the saved audit outputs (no interpretation).
+"""
+EXPORT REPORT ASSETS
+--------------------
 
-Run AFTER `python src/practical_assignment.py`:
+Export the report's tables and figures from the saved audit outputs.
 
+Writes LaTeX table snippets to `results/` and copies the report figures
+to `results/figures/`, so every number and figure in the report comes from the
+submitted run.
+
+This script reads the outputs already saved by the pipeline. To regenerate
+them from scratch, we need to rerun the full pipeline first:
+    python src/practical_assignment.py
     python src/export_report_assets.py
-
-It writes LaTeX table snippets to `report/tables/` and copies the report figures to
-`report/figures/`, so every number and figure in the report comes from the submitted run.
-Upload (or re-upload) both folders to Overleaf after each clean run.
 """
 import ast
 import shutil
@@ -15,11 +20,21 @@ import pandas as pd
 
 from data_loader import ROOT, load_config
 
-MODELS = ["GaussianNB", "OnlineLogReg", "HoeffdingTree", "OnlineBagging", "ARF"]
-LABELS = {"GaussianNB": "Gaussian NB", "OnlineLogReg": "Online Logistic Reg.",
-          "HoeffdingTree": "Hoeffding Tree", "OnlineBagging": "Online Bagging",
-          "ARF": "Adaptive Random Forest", "Majority": "\\textit{Majority (ref.)}",
-          "Persistence": "\\textit{Persistence (ref.)}", "FrozenLogReg": "\\textit{Frozen LogReg (ref.)}"}
+MODELS = ["GaussianNB", 
+          "OnlineLogReg", 
+          "HoeffdingTree", 
+          "OnlineBagging", 
+          "ARF"]
+
+LABELS = {"GaussianNB": "Gaussian NB", 
+          "OnlineLogReg": "Online Logistic Reg.",
+          "HoeffdingTree": "Hoeffding Tree", 
+          "OnlineBagging": "Online Bagging",
+          "ARF": "Adaptive Random Forest", 
+          "Majority": "\\textit{Majority (ref.)}",
+          "Persistence": "\\textit{Persistence (ref.)}", 
+          "FrozenLogReg": "\\textit{Frozen LogReg (ref.)}"}
+
 FIGURES = {"city_a_stream_profile.png": "cityA_stream_profile.png",
            "city_b_stream_profile.png": "cityB_stream_profile.png",
            "city_comparison.png": "city_comparison.png",
@@ -27,6 +42,7 @@ FIGURES = {"city_a_stream_profile.png": "cityA_stream_profile.png",
            "time_performance_tradeoff.png": "time_performance_tradeoff.png",
            "confusion_matrices.png": "confusion_matrices.png",
            "perf_window_macro_f1.png": "perf_window_macro_f1.png"}
+
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 
 
