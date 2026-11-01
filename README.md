@@ -9,7 +9,6 @@ An outdoor running event organiser needs reliable weather windows for recurring 
 | Field             | Value                                                                          |
 |-------------------|--------------------------------------------------------------------------------|
 | Assignment code   | `PA48`                                                                         |
-| Group             | `GroupPA48`                      |
 | City A            | Angra do Heroísmo (Terceira, Azores): 38.6539, -27.2184                        |
 | City B            | Braga (mainland, North): 41.5514, -8.4231                                      |
 | Business context  | Outdoor Running Event Organiser                                                |
@@ -137,8 +136,6 @@ python src/export_report_assets.py
 ```
 
 The first script downloads (or reuses cached) data for both cities and prints the data-quality reports and the frozen wind threshold. It then writes `results/stream_summary.csv`, `results/metrics.csv`, `results/configurations.csv`, `results/history.csv.gz` and the figures in `results/figures/`. Paths resolve from the repository root, so the command also works from inside `src/`. A full run takes roughly 10–15 minutes (ARF and Online Bagging are the slowest learners).
-
-The second script reads the saved outputs and writes the LaTeX tables to `report/tables/` and the report figures to `report/figures/`. Run it only after the main experiment.
 
 Notebooks `01`–`04` reproduce the same steps one at a time; run them in order from the `notebooks/` folder.
 
